@@ -1,13 +1,21 @@
 export default {
   async scheduled(event, env, ctx) {
-    // const logger = new Logger(env);
+    const logger = new Logger(env);
+    logger.info(`cron: ${event.cron}`);
     const now = (new Date()).toLocaleString('en-US', { timeZone: 'Asia/Hong_Kong' });
     const photos = {
-      'Victoria Peak (looking towards the north-northeast)': `https://www.hko.gov.hk/wxinfo/aws/hko_mica/vpb/latest_HD_VPB.jpg`,
-      'Central (Victoria Harbour)': `https://www.hko.gov.hk/wxinfo/aws/hko_mica/cp1/latest_HD_CP1.jpg`,
-      'International Commerce Centre (looking towards the southeast)': `https://www.hko.gov.hk/wxinfo/aws/hko_mica/ic1/latest_HD_IC1.jpg`,
-      'International Commerce Centre (looking towards the southwest)': `https://www.hko.gov.hk/wxinfo/aws/hko_mica/ic2/latest_HD_IC2.jpg`,
-      // 'Tsim Sha Tsui (looking towards the west)': `https://www.hko.gov.hk/wxinfo/aws/hko_mica/hk2/latest_HD_HK2.jpg`,
+      // 'Victoria Peak (looking towards the north-northeast)': 
+      //   `https://www.hko.gov.hk/wxinfo/aws/hko_mica/vpb/latest_HD_VPB.jpg`,
+      // 'Central (Victoria Harbour)': 
+      //   `https://www.hko.gov.hk/wxinfo/aws/hko_mica/cp1/latest_HD_CP1.jpg`,
+      // 'International Commerce Centre (looking towards the southeast)': 
+      //   `https://www.hko.gov.hk/wxinfo/aws/hko_mica/ic1/latest_HD_IC1.jpg`,
+      'Lamma Island (looking towards the northwest)': 
+        `https://www.hko.gov.hk/wxinfo/aws/hko_mica/lam/latest_HD_LAM.jpg`,
+      'International Commerce Centre (looking towards the southwest)': 
+        `https://www.hko.gov.hk/wxinfo/aws/hko_mica/ic2/latest_HD_IC2.jpg`,
+      'Tsim Sha Tsui (looking towards the west)': 
+        `https://www.hko.gov.hk/wxinfo/aws/hko_mica/hk2/latest_HD_HK2.jpg`,
       // 'Sai Wan Ho (looking towards the east)': `https://www.hko.gov.hk/wxinfo/aws/hko_mica/swh/latest_HD_SWH.jpg`,
     }
     const inputMediaPhotos = Object.keys(photos).map((location) => ({
@@ -17,9 +25,12 @@ export default {
       parse_mode: 'HTML'
     }));
     const url = `https://api.telegram.org/bot${env.API_KEY}/sendMediaGroup?chat_id=${env.TELEGRAM_CRON_JOB_CHAT_ID}&media=${JSON.stringify(inputMediaPhotos)}&disable_notification=true`;
+    // const url = `https://api.telegram.org/bot${env.API_KEY}/sendMessage?chat_id=${env.TELEGRAM_CRON_JOB_CHAT_ID}&text=hello_from_bot&disable_notification=true`;
     console.log(222, url);
     const result = await fetch(url);
-    console.log(333, result);
+    console.log(333, `${result.status} ${result.statusText}`, result);
+    const body = await result.text();
+    console.log(444, body);
     //await logger.info(`Scheduled job from <code>${event.cron}</code> at ${now}.\n${photo}`);
   },
   async fetch(request, env) {
